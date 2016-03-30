@@ -1,0 +1,6 @@
+source https://www.nuget.org/api/v2/
+
+nuget FSharp.Compiler.Service
+nuget AjaxMin
+nuget Persimmon
+nuget Persimmon.Console
