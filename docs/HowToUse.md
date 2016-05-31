@@ -8,7 +8,13 @@
 
 ## 使ってみる
 
-F# スクリプトを作成し、 `Doconano.dll` への参照を通しておきます。
+まず `Doco init ディレクトリ名` を実行し、サンプルのCSSファイルとスクリプトが入った作業ディレクトリを作成します。
+
+```text
+$ Doco init test
+```
+
+続いてドキュメントを書いていきます。 `test` ディレクトリにある `document.fsx` スクリプトを開きましょう。まずは `Doconano.dll` への参照を通しておきます。
 
 ```fsharp
 #r @"C:\your\path\to\Doconano.dll"
@@ -39,7 +45,7 @@ let makeDoc() =
     }
 ```
 
-`docMain : output: string option -> css:string option -> 'a` というシグネチャの関数を定義して、ドキュメントを組み立てます。
+`docMain : output: string option -> css:string option -> 'a` というシグネチャの関数が定義されており、ここでドキュメントを組み立てます。今回は特に変更の必要はありません。
 
 ```fsharp
 let docMain (output: string option) (css: string option) =
@@ -49,13 +55,15 @@ let docMain (output: string option) (css: string option) =
     0  // とりあえず、終了コードを返しておく
 ```
 
-あとは `Doco.exe` を実行すると、
+ドキュメントが書けたら、出力しましょう。 `Doco make スクリプト名` を実行します。
 
 ```text
-$ Doco .\input.fsx
+$ cd .\test
+
+$ Doco make .\document.fsx
 ```
 
-以下のような `output.html` が生成されます。
+すると、以下のような `output.html` が生成されます。
 
 ```html
 <!DOCTYPE html>
@@ -80,4 +88,4 @@ $ Doco .\input.fsx
 </html>
 ```
 
-`Doco.exe` には、出力ファイル名や食べさせるCSSファイルも指定できます。
+`Doco make` には、出力ファイル名や一緒に読み込ませるCSSファイルも指定できます。
