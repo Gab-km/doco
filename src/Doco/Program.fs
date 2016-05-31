@@ -89,26 +89,50 @@ module Program =
         finally
             File.Delete tempfile
 
-    let private (|Execute|ShowHelp|) argv =
+    let private initialize (dirName: string) =
+        let sep = Path.DirectorySeparatorChar
+        // create a new directory
+        let newDirPath = sprintf "%s%c%s" Environment.CurrentDirectory sep dirName
+        let dirInfo = Directory.CreateDirectory newDirPath
+        // create a sample stylesheet
+        let newStylePath = sprintf "%s%c%s" newDirPath sep "style.css"
+        use fs1 = File.Create newStylePath
+        use sw1 = new StreamWriter(fs1)
+        sw1.Write(Templates.style)
+        // create a sample document script
+        let newDocumentPath = sprintf "%s%c%s" newDirPath sep "document.fsx"
+        use fs2 = File.Create newDocumentPath
+        use sw2 = new StreamWriter(fs2)
+        sw2.Write(Templates.script)
+
+    let private (|Initialize|Execute|ShowHelp|) argv =
         let len = Array.length argv
-        if len = 0 || len >= 4 then ShowHelp
-        else Execute
+        if len = 0 then ShowHelp
+        else
+            match argv.[0], len with
+            | "init", 2                       -> Initialize
+            | "make", n when 2 <= n && n <= 4 -> Execute
+            | _                               -> ShowHelp
 
     let private showHelp() =
         printfn "Usage:"
-        printfn "  Doco INPUT [OUTPUT [STYLESHEET]]"
+        printfn "  Doco COMMAND [...]"
         printfn ""
-        printfn "Arguments:"
-        printfn "  INPUT         An input file path."
-        printfn "  OUTPUT        An output file path."
-        printfn "                If none, 'output.html' will be created."
-        printfn "  STYLESHEET    A CSS(Cascading Style Sheets) file path."
-        printfn "                If none, no stylesheets will be included."
+        printfn "Command:"
+        printfn "  init DIRNAME"
+        printfn "       DIRNAME       A root directory name to initialize."
+        printfn "  make INPUT [OUTPUT [STYLESHEET]]"
+        printfn "       INPUT         An input file path."
+        printfn "       OUTPUT        An output file path."
+        printfn "                     If none, 'output.html' will be created."
+        printfn "       STYLESHEET    A CSS(Cascading Style Sheets) file path."
+        printfn "                     If none, no stylesheets will be included."
         printfn ""
         ()
 
     [<EntryPoint>]
     let main argv =
         match argv with
-        | Execute  -> evalScript argv
-        | ShowHelp -> showHelp(); 0
+        | Initialize -> initialize argv.[1]; 0
+        | Execute    -> evalScript <| Array.skip 1 argv
+        | ShowHelp   -> showHelp(); 0
