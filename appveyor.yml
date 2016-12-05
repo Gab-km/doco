@@ -1,0 +1,13 @@
+version: 0.2.0.{build}
+
+branches:
+  except:
+    - gh-pages
+
+build_script:
+  - ps: .paket/paket.bootstrapper.exe
+  - ps: .paket/paket.exe update
+  - ps: MSBuild.exe .\Doconano.sln /p:Configuration=Debug /p:Platform="Any CPU" /v:minimal
+
+test_script:
+  - ps: .\packages\Persimmon.Console\tools\Persimmon.Console.exe .\test\Doconano.Test\bin\Debug\Doconano.Test.dll

@@ -56,6 +56,7 @@ and Document =
     | List of Ordering * (Document * (Document list)) list
     | Span of string * ElementAttribute
     | Div of Document * ElementAttribute
+    | Img of string * string * ElementAttribute
     | RawHtml of string
     | AggregDoc of Document list
     | PhysicalNewLine
@@ -94,6 +95,7 @@ module Documents =
     let ul (contents: (Document * (Document list)) list) = List(Unordered, contents)
     let span text = Span(text, Attributes.defaultAttr())
     let div doc = Div(doc, Attributes.defaultAttr())
+    let img text path = Img(text, path, Attributes.defaultAttr())
     let rawHtml html = RawHtml html
 
     let inline (|||) doc idName =
@@ -101,6 +103,7 @@ module Documents =
         | Paragraph (text, attr) -> Paragraph(text, Attributes.setId idName attr)
         | Span (text, attr)      -> Span(text, Attributes.setId idName attr)
         | Div (doc, attr)        -> Div(doc, Attributes.setId idName attr)
+        | Img (text, path, attr) -> Img(text, path, Attributes.setId idName attr)
         | other                  -> other
 
     let inline (<<<) doc className =
@@ -108,6 +111,7 @@ module Documents =
         | Paragraph (text, attr) -> Paragraph(text, Attributes.setClass className attr)
         | Span (text, attr)      -> Span(text, Attributes.setClass className attr)
         | Div (doc, attr)        -> Div(doc, Attributes.setClass className attr)
+        | Img (text, path, attr) -> Img(text, path, Attributes.setClass className attr)
         | other                  -> other
 
     let inline (>>>) doc style =
@@ -115,6 +119,7 @@ module Documents =
         | Paragraph (text, attr) -> Paragraph(text, Attributes.setStyle style attr)
         | Span (text, attr)      -> Span(text, Attributes.setStyle style attr)
         | Div (doc, attr)        -> Div(doc, Attributes.setStyle style attr)
+        | Img (text, path, attr) -> Img(text, path, Attributes.setStyle style attr)
         | other                  -> other
 
     let inline (+++) (d1: Document) (d2: Document) =
@@ -149,6 +154,7 @@ module Documents =
         lists + e
     | Span(t, attr) -> "<span" + Attributes.showAll attr + ">" + t + "</span>"
     | Div(d, attr)  -> "<div" + Attributes.showAll attr + ">" + docToHtml d + "</div>"
+    | Img(t, path, attr) -> "<img src=\"" + path + "\"" + Attributes.showAll attr + ">" + t + "</img>"
     | RawHtml(html) -> html
     | AggregDoc(docs) -> docs |> List.map docToHtml |> List.rev |> Utility.concat
     | PhysicalNewLine -> "\n"
