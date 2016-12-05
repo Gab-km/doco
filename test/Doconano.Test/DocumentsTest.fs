@@ -66,6 +66,26 @@ module DocumentsTest =
             do! assertEquals expected actual
         }
 
+    module ``Given Img`` =
+        let ``When Documents.(|||) then returns new Img whose attribute is replaced by given id`` = test {
+            let img = Documents.img "test" "/path/to/test"
+            let actual = Documents.(|||) img "myID"
+            let expected = Img ("test", "/path/to/test", {ID=Some("myID"); Class=None; Style=None})
+            do! assertEquals expected actual
+        }
+        let ``When Documents.(<<<) then returns new Img whose attribute is replaced by given class`` = test {
+            let img = Documents.img "test" "/path/to/test"
+            let actual = Documents.(<<<) img "myClass"
+            let expected = Img ("test", "/path/to/test", {ID=None; Class=Some("myClass"); Style=None})
+            do! assertEquals expected actual
+        }
+        let ``When Documents.(>>>) then returns new Img whose attribute is replaced by given style`` = test {
+            let img = Documents.img "test" "/path/to/test"
+            let actual = Documents.(>>>) img "myStyle"
+            let expected = Img ("test", "/path/to/test", {ID=None; Class=None; Style=Some("myStyle")})
+            do! assertEquals expected actual
+        }
+
     let ``docToHtml`` =
         let parameterizedTest (target, expected) = test {
             let actual = Documents.docToHtml target
@@ -91,6 +111,7 @@ module DocumentsTest =
             case (Documents.ul [Documents.rawHtml "unordered list", [Documents.p "p"]], "<ul>\n<li>unordered list<p>p</p></li>\n</ul>")
             case (Documents.span "span", "<span>span</span>")
             case (Documents.div <| Documents.p "p", "<div><p>p</p></div>")
+            case (Documents.img "img" "/path/to/ref", "<img src=\"/path/to/ref\">img</img>")
             case (Documents.rawHtml "<a href='/hoge'>hoge</a>", "<a href='/hoge'>hoge</a>")
             run parameterizedTest
         }
