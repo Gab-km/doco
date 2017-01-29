@@ -154,7 +154,7 @@ module Documents =
         lists + e
     | Span(t, attr) -> "<span" + Attributes.showAll attr + ">" + t + "</span>"
     | Div(d, attr)  -> "<div" + Attributes.showAll attr + ">" + docToHtml d + "</div>"
-    | Img(t, path, attr) -> "<img src=\"" + path + "\"" + Attributes.showAll attr + ">" + t + "</img>"
+    | Img(t, path, attr) -> "<img src=\"" + path + "\" alt=\"" + t + "\"" + Attributes.showAll attr + ">"
     | RawHtml(html) -> html
     | AggregDoc(docs) -> docs |> List.map docToHtml |> List.rev |> Utility.concat
     | PhysicalNewLine -> "\n"

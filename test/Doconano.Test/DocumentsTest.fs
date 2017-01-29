@@ -111,7 +111,7 @@ module DocumentsTest =
             case (Documents.ul [Documents.rawHtml "unordered list", [Documents.p "p"]], "<ul>\n<li>unordered list<p>p</p></li>\n</ul>")
             case (Documents.span "span", "<span>span</span>")
             case (Documents.div <| Documents.p "p", "<div><p>p</p></div>")
-            case (Documents.img "img" "/path/to/ref", "<img src=\"/path/to/ref\">img</img>")
+            case (Documents.img "img" "/path/to/ref", "<img src=\"/path/to/ref\" alt=\"img\">")
             case (Documents.rawHtml "<a href='/hoge'>hoge</a>", "<a href='/hoge'>hoge</a>")
             run parameterizedTest
         }
